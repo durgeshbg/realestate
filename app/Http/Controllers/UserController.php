@@ -68,7 +68,40 @@ class UserController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $user = User::find($id);
+        $request->validate([
+            'name' => 'sometimes|string|max:255',
+            'email' => ['sometimes', 'email', Rule::unique('users', 'email')->ignore($user->id)],
+            'password' => 'sometimes|string|min:8',
+            'phone' => ['sometimes', 'string', 'max:15', Rule::unique('users', 'phone')->ignore($user->id)],
+            'alternate_phone' => ['nullable', 'string', 'max:15', Rule::unique('users', 'alternate_phone')->ignore($user->id)],
+            'gender' => 'nullable|in:male,female,other',
+            'date_of_birth' => 'sometimes|date',
+            'role' => 'nullable|in:lead,admin',
+            'address_line_1' => 'sometimes|string|max:255',
+            'address_line_2' => 'nullable|string|max:255',
+            'city' => 'sometimes|string|max:255',
+            'state' => 'sometimes|string|max:255',
+            'pincode' => 'sometimes|string|max:10',
+            'country' => 'sometimes|string|max:255',
+        ]);
+        $user = $user->update($request->only([
+            'name',
+            'email',
+            'password',
+            'phone',
+            'alternate_phone',
+            'gender',
+            'date_of_birth',
+            'role',
+            'address_line_1',
+            'address_line_2',
+            'city',
+            'state',
+            'pincode',
+            'country',
+        ]));
+        return response()->json(['message' => 'User updated successfully', 201]);
     }
 
     /**
