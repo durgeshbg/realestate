@@ -13,7 +13,15 @@ class UserController extends Controller
      */
     public function index()
     {
-        
+        $users = User::all();
+        $start = request()->query('start');
+        $end = request()->query('end');
+        if (request()->query('start')) {
+            $start = $start - 1 < 0 ? 0 : $start - 1;
+            $end = $end ? $start - $end : null;
+            $users = array_slice($users->toArray(), $start, $end);
+        }
+        return $users;
     }
 
     /**
