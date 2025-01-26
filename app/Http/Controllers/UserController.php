@@ -29,7 +29,25 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|string|min:8',
+            'phone' => 'required|string|unique:users,phone|max:15',
+            'alternate_phone' => 'nullable|string|unique:users,alternate_phone|max:15',
+            'gender' => 'nullable|in:male,female,other',
+            'date_of_birth' => 'required|date',
+            'role' => 'nullable|in:lead,admin',
+            'address_line_1' => 'required|string|max:255',
+            'address_line_2' => 'nullable|string|max:255',
+            'city' => 'required|string|max:255',
+            'state' => 'required|string|max:255',
+            'pincode' => 'required|string|max:10',
+            'country' => 'required|string|max:255',
+        ]);
+
+        $user = User::create($request->all());
+        return response()->json(['message' => 'User created successfully'], 201);
     }
 
     /**
